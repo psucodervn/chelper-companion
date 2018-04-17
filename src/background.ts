@@ -7,8 +7,8 @@ declare global {
 
 const isChrome = window.navigator.userAgent.toLowerCase().includes('chrome');
 
-function checkTab(tabId: number, changeInfo: object, tab: browser.tabs.Tab) {
-  browser.tabs.sendMessage(tabId, {
+async function checkTab(tabId: number, changeInfo: object, tab: browser.tabs.Tab) {
+  await browser.tabs.sendMessage(tabId, {
     action: MessageAction.CheckTab,
     payload: {
       tabId,
@@ -17,20 +17,22 @@ function checkTab(tabId: number, changeInfo: object, tab: browser.tabs.Tab) {
   });
 }
 
-function parse(tab: browser.tabs.Tab) {
-  browser.tabs.sendMessage(tab.id, {
+async function parse(tab: browser.tabs.Tab) {
+  await browser.tabs.sendMessage(tab.id, {
     action: MessageAction.Parse
   });
 }
 
-function send(tabId: number, message: string) {
-  axios.post('http://localhost:4243', message, {
-    timeout: 500,
-  }).catch(() => {
-    browser.tabs.sendMessage(tabId, {
+async function send(tabId: number, message: string) {
+  try {
+    await axios.post('http://localhost:4243', message, {
+      timeout: 500,
+    })
+  } catch (err) {
+    await browser.tabs.sendMessage(tabId, {
       action: MessageAction.TaskSent,
     });
-  });
+  }
 }
 
 function enablePageAction(tabId: number) {
@@ -49,7 +51,7 @@ function disablePageAction(tabId: number) {
   }
 }
 
-function handleMessage(message: Message, sender: browser.runtime.MessageSender) {
+async function handleMessage(message: Message, sender: browser.runtime.MessageSender) {
   if (!sender.tab) return;
 
   switch (message.action) {
@@ -60,7 +62,7 @@ function handleMessage(message: Message, sender: browser.runtime.MessageSender) 
       disablePageAction(message.payload.tabId);
       break;
     case MessageAction.SendTask:
-      send(sender.tab.id, message.payload.message);
+      await send(sender.tab.id, message.payload.message);
       break;
   }
 }
@@ -68,3 +70,6 @@ function handleMessage(message: Message, sender: browser.runtime.MessageSender) 
 browser.tabs.onUpdated.addListener(checkTab);
 browser.pageAction.onClicked.addListener(parse);
 browser.runtime.onMessage.addListener(handleMessage);
+
+
+

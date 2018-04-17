@@ -8,7 +8,8 @@ const Nanobar = require('nanobar');
 
 let activeParser: Parser = null;
 
-function checkTab(tabId: number, url: string): void {
+
+async function checkTab(tabId: number, url: string): Promise<void> {
   init(tabId);
 
   for (let i = 0; i < parsers.length; i++) {
@@ -20,14 +21,14 @@ function checkTab(tabId: number, url: string): void {
 
     if (hasMatchingPattern && parser.canHandlePage()) {
       activeParser = parser;
-      activeParser.load();
+      await activeParser.load();
       break;
     }
   }
 }
 
 async function parse() {
-  disableParsing();
+  await disableParsing();
   (window as any).nanoBar = new Nanobar();
 
   document.querySelectorAll('.bar').forEach(bar => {
@@ -42,10 +43,10 @@ async function parse() {
     console.error(err);
   }
 
-  enableParsing();
+  await enableParsing();
 }
 
-function handleMessage(message: Message, sender: browser.runtime.MessageSender) {
+async function handleMessage(message: Message, sender: browser.runtime.MessageSender) {
   if (sender.tab) return;
 
   switch (message.action) {
@@ -53,7 +54,7 @@ function handleMessage(message: Message, sender: browser.runtime.MessageSender) 
       checkTab(message.payload.tabId, message.payload.url);
       break;
     case MessageAction.Parse:
-      parse();
+      await parse();
       break;
   }
 }

@@ -9,8 +9,8 @@ export function init(tabId: number) {
 /**
  * Enables the parse button for this tab.
  */
-export function enableParsing() {
-  browser.runtime.sendMessage({
+export async function enableParsing() {
+  await browser.runtime.sendMessage({
     action: MessageAction.EnableParsing,
     payload: {
       tabId: id,
@@ -21,8 +21,8 @@ export function enableParsing() {
 /**
  * Disables the parse button for this tab.
  */
-export function disableParsing() {
-  browser.runtime.sendMessage({
+export async function disableParsing() {
+  await browser.runtime.sendMessage({
     action: MessageAction.DisableParsing,
     payload: {
       tabId: id,

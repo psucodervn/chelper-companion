@@ -3,7 +3,6 @@ import { matchPatternToRegExp } from '../vendor/match-pattern-to-reg-exp';
 import { Sendable } from '../models/Sendable';
 
 
-
 export abstract class Parser {
   /**
    * Returns the match patterns which this problemParser can handle. These are the
@@ -43,8 +42,8 @@ export abstract class Parser {
    * When both a match pattern matches and canHandlePage returns true, this method is called.
    * By default, it automatically enables the ability to parse the page.
    */
-  load(): void {
-    enableParsing();
+  async load(): Promise<void> {
+    await enableParsing();
   }
 
   /**
@@ -75,31 +74,14 @@ export abstract class Parser {
    * Fetches all the given urls using GET requests and resolves into an array of HTML bodies.
    * The resulting array is in the same order as in which the urls are given.
    */
-  protected fetchAll(urls: string[], timeout: number = 500): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      const results: string[] = [];
-      const totalUrls = urls.length;
-
-      const doFetching = async () => {
-        try {
-          const url = urls.shift();
-
-          const result = await this.fetch(url);
-          results.push(result);
-        } catch (err) {
-          reject(err);
-          return;
-        }
-
-        if (urls.length > 0) {
-          (window as any).nanoBar.go((1 - urls.length / totalUrls) * 100);
-          setTimeout(doFetching, timeout);
-        } else {
-          resolve(results);
-        }
-      };
-
-      doFetching();
-    });
+  protected async fetchAll(urls: string[], timeout: number = 500): Promise<string[]> {
+    try {
+      return await Promise.all(urls.map(async url => {
+        return await this.fetch(url);
+      }));
+    } catch (err) {
+      console.error("fetchAll:", err);
+      throw err;
+    }
   }
 }
