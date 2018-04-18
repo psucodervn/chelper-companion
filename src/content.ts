@@ -36,7 +36,7 @@ async function parse() {
   });
 
   try {
-    const sendable = await activeParser.parse(document.body.innerHTML);
+    const sendable = await activeParser.parse(document.body.innerHTML, document.baseURI);
     (window as any).nanoBar.go(100);
     await sendable.send();
   } catch (err) {
@@ -51,7 +51,7 @@ async function handleMessage(message: Message, sender: browser.runtime.MessageSe
 
   switch (message.action) {
     case MessageAction.CheckTab:
-      checkTab(message.payload.tabId, message.payload.url);
+      await checkTab(message.payload.tabId, message.payload.url);
       break;
     case MessageAction.Parse:
       await parse();

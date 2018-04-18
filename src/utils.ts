@@ -22,12 +22,12 @@ export async function enableParsing() {
  * Disables the parse button for this tab.
  */
 export async function disableParsing() {
-  await browser.runtime.sendMessage({
-    action: MessageAction.DisableParsing,
-    payload: {
-      tabId: id,
-    },
-  });
+  // await browser.runtime.sendMessage({
+  //   action: MessageAction.DisableParsing,
+  //   payload: {
+  //     tabId: id,
+  //   },
+  // });
 }
 
 export function htmlToElement(html: string): Element {

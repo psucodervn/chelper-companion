@@ -50,7 +50,7 @@ export abstract class Parser {
    * The method called when the parse button is clicked.
    * If it rejects, an notify will be shown to the user.
    */
-  abstract parse(html: string): Promise<Sendable>;
+  abstract parse(html: string, url?: string): Promise<Sendable>;
 
   /**
    * Fetches a url using a GET request and resolves into the HTML body.

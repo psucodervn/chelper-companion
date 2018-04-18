@@ -1,13 +1,23 @@
 import { Task } from './Task';
 
 export class JSONTask extends Task {
-  name: string;
-  group: string;
-
-  constructor(name: string, group: string) {
+  constructor(
+    public site: string,
+    public url: string,
+    public name: string,
+    public group: string,
+    public timeLimit: string,
+    public memoryLimit: string,
+    public input: string,
+    public output: string,
+    public tests: {
+      input: string,
+      output: string,
+    }[],
+    public dirs: string[],
+    public meta: object = {},
+  ) {
     super();
-    this.name = name;
-    this.group = group;
   }
 
   toString(): string {
