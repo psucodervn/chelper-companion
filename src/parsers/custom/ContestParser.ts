@@ -24,7 +24,7 @@ export abstract class ContestParser extends Parser {
         const tasks = [];
 
         for (let i = 0; i < bodies.length; i++) {
-          const task = await this.problemParser.parse(bodies[i]);
+          const task = await this.problemParser.parse(bodies[i], links[i]);
           tasks.push(task);
         }
 
