@@ -38,7 +38,7 @@ export class CodeforcesProblemParser extends DefaultParser {
     sampleTests.querySelectorAll('div.output > pre').forEach(value => {
       outputs.push(value.innerHTML.replace(/<br>/g, '\n'));
     });
-    console.assert(inputs.length == output.length, "invalid sample tests format");
+    console.assert(inputs.length !== output.length, "invalid sample tests format");
     const tests = inputs.map((value, index) => ({ input: value, output: outputs[index] }) );
     const dirs = this.getDirs(url);
 
